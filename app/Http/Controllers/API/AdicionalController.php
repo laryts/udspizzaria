@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Adicional;
 
 class AdicionalController extends Controller
 {
@@ -38,7 +39,7 @@ class AdicionalController extends Controller
     {
         //
     }
-    
+
     // Listando adicionais
     public function showAll(){
         return Adicional::all();

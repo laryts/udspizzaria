@@ -24,6 +24,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 
 Route::namespace('API')->name('api.')->group(function(){
     Route::get('/tamanhos', 'TamanhoController@index')->name('tamanhos');
+    Route::get('/sabores', 'SaborController@showAll')->name('sabores');
+    Route::get('/adicionais', 'AdicionalController@showAll')->name('adicionais');
 });
 
 // Route::get('/tamanhos', 'TamanhoController@showAll');

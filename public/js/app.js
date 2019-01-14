@@ -13179,25 +13179,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -13210,8 +13191,26 @@ __webpack_require__.r(__webpack_exports__);
         tamanho: '',
         sabor: '',
         adicional: ''
-      }
+      },
+      tamanhos: null,
+      sabores: null,
+      adicionais: null,
+      valorTotal: 0,
+      tempoTotal: 0
     };
+  },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('/api/tamanhos').then(function (response) {
+      return _this.tamanhos = response.data;
+    });
+    axios.get('/api/sabores').then(function (response) {
+      return _this.sabores = response.data;
+    });
+    axios.get('/api/adicionais').then(function (response) {
+      return _this.adicionais = response.data;
+    });
   },
   methods: {
     prev: function prev() {
@@ -13222,6 +13221,26 @@ __webpack_require__.r(__webpack_exports__);
     },
     submit: function submit() {
       alert('Submit to blah and show blah and etc.');
+    },
+    onChangeTamanho: function onChangeTamanho() {
+      for (var index = 0; index < this.tamanhos.length; index++) {
+        var element = this.tamanhos[index];
+
+        if (element.idTamanhos == this.pedido.tamanho) {
+          this.valorTotal = element.tmValor;
+          this.tempoTotal = element.tmTempo;
+        }
+      }
+    },
+    onChangeSabor: function onChangeSabor() {
+      for (var index = 0; index < this.sabores.length; index++) {
+        var element = this.sabores[index];
+
+        if (element.idSabores == this.pedido.sabor) {
+          this.valorTotal += element.sbValor;
+          this.tempoTotal += element.sbTempo;
+        }
+      }
     }
   }
 });
@@ -49112,24 +49131,29 @@ var render = function() {
                                 "aria-label": "Example select with button addon"
                               },
                               on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.pedido,
-                                    "tamanho",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.pedido,
+                                      "tamanho",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  },
+                                  function($event) {
+                                    _vm.onChangeTamanho()
+                                  }
+                                ]
                               }
                             },
                             [
@@ -49139,18 +49163,18 @@ var render = function() {
                                 [_vm._v("Escolha o tamanho da sua pizza...")]
                               ),
                               _vm._v(" "),
-                              _c("option", { attrs: { value: "p" } }, [
-                                _vm._v("Pequena")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "m" } }, [
-                                _vm._v("Médio")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "g" } }, [
-                                _vm._v("Grande")
-                              ])
-                            ]
+                              _vm._l(_vm.tamanhos, function(tam, key) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: key,
+                                    domProps: { value: tam.idTamanhos }
+                                  },
+                                  [_vm._v(_vm._s(tam.tmDescricao))]
+                                )
+                              })
+                            ],
+                            2
                           )
                         ]),
                         _vm._v(" "),
@@ -49189,24 +49213,29 @@ var render = function() {
                                 "aria-label": "Example select with button addon"
                               },
                               on: {
-                                change: function($event) {
-                                  var $$selectedVal = Array.prototype.filter
-                                    .call($event.target.options, function(o) {
-                                      return o.selected
-                                    })
-                                    .map(function(o) {
-                                      var val =
-                                        "_value" in o ? o._value : o.value
-                                      return val
-                                    })
-                                  _vm.$set(
-                                    _vm.pedido,
-                                    "sabor",
-                                    $event.target.multiple
-                                      ? $$selectedVal
-                                      : $$selectedVal[0]
-                                  )
-                                }
+                                change: [
+                                  function($event) {
+                                    var $$selectedVal = Array.prototype.filter
+                                      .call($event.target.options, function(o) {
+                                        return o.selected
+                                      })
+                                      .map(function(o) {
+                                        var val =
+                                          "_value" in o ? o._value : o.value
+                                        return val
+                                      })
+                                    _vm.$set(
+                                      _vm.pedido,
+                                      "sabor",
+                                      $event.target.multiple
+                                        ? $$selectedVal
+                                        : $$selectedVal[0]
+                                    )
+                                  },
+                                  function($event) {
+                                    _vm.onChangeSabor()
+                                  }
+                                ]
                               }
                             },
                             [
@@ -49216,18 +49245,18 @@ var render = function() {
                                 [_vm._v("Escolha o sabor da sua pizza...")]
                               ),
                               _vm._v(" "),
-                              _c("option", { attrs: { value: "calabresa" } }, [
-                                _vm._v("Calabresa")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "marquerita" } }, [
-                                _vm._v("Marquerita")
-                              ]),
-                              _vm._v(" "),
-                              _c("option", { attrs: { value: "portuguesa" } }, [
-                                _vm._v("Portuguesa")
-                              ])
-                            ]
+                              _vm._l(_vm.sabores, function(sab, key) {
+                                return _c(
+                                  "option",
+                                  {
+                                    key: key,
+                                    domProps: { value: sab.idSabores }
+                                  },
+                                  [_vm._v(_vm._s(sab.sbDescricao))]
+                                )
+                              })
+                            ],
+                            2
                           )
                         ]),
                         _vm._v(" "),
@@ -49260,134 +49289,102 @@ var render = function() {
                     : _vm._e(),
                   _vm._v(" "),
                   _vm.step === 2
-                    ? _c("div", [
-                        _c("h4", [
-                          _vm._v("Vamos deixar a pizza com a sua cara?")
-                        ]),
-                        _vm._v(" "),
-                        _c("span", [_vm._v("Escolha os adicionais")]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "input-group mb-3" }, [
-                          _c("div", { staticClass: "input-group-prepend" }, [
-                            _c("div", { staticClass: "input-group-text" }, [
-                              _c("input", {
-                                attrs: {
-                                  type: "checkbox",
-                                  "aria-label":
-                                    "Checkbox for following text input",
-                                  name: "Extra Bacon"
-                                }
-                              })
-                            ])
+                    ? _c(
+                        "div",
+                        [
+                          _c("h4", [
+                            _vm._v("Vamos deixar a pizza com a sua cara?")
                           ]),
                           _vm._v(" "),
-                          _c("input", {
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              "aria-label": "Text input with checkbox",
-                              value: "Extra Bacon",
-                              disabled: ""
-                            }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "input-group mb-3" }, [
-                          _c("div", { staticClass: "input-group-prepend" }, [
-                            _c("div", { staticClass: "input-group-text" }, [
-                              _c("input", {
-                                attrs: {
-                                  type: "checkbox",
-                                  "aria-label":
-                                    "Checkbox for following text input",
-                                  name: "Sem Cebola"
-                                }
-                              })
-                            ])
-                          ]),
+                          _c("span", [_vm._v("Escolha os adicionais")]),
                           _vm._v(" "),
-                          _c("input", {
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              "aria-label": "Text input with checkbox",
-                              value: "Sem Cebola",
-                              disabled: ""
-                            }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c("div", { staticClass: "input-group mb-3" }, [
-                          _c("div", { staticClass: "input-group-prepend" }, [
-                            _c("div", { staticClass: "input-group-text" }, [
-                              _c("input", {
-                                attrs: {
-                                  type: "checkbox",
-                                  "aria-label":
-                                    "Checkbox for following text input",
-                                  name: "Barda Recheada"
-                                }
-                              })
-                            ])
-                          ]),
-                          _vm._v(" "),
-                          _c("input", {
-                            staticClass: "form-control",
-                            attrs: {
-                              type: "text",
-                              "aria-label": "Text input with checkbox",
-                              value: "Borda Recheada",
-                              disabled: ""
-                            }
-                          })
-                        ]),
-                        _vm._v(" "),
-                        _c(
-                          "div",
-                          { staticClass: "d-flex justify-content-center" },
-                          [
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-outline-secondary",
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    _vm.prev()
-                                  }
-                                }
-                              },
+                          _vm._l(_vm.adicionais, function(adi, key) {
+                            return _c(
+                              "div",
+                              { key: key, staticClass: "input-group mb-3" },
                               [
-                                _c("font-awesome-icon", {
-                                  attrs: { icon: ["fas", "chevron-left"] }
-                                }),
-                                _vm._v(" Previous")
-                              ],
-                              1
-                            ),
-                            _vm._v(" "),
-                            _c(
-                              "button",
-                              {
-                                staticClass: "btn btn-outline-danger",
-                                on: {
-                                  click: function($event) {
-                                    $event.preventDefault()
-                                    _vm.submit()
-                                  }
-                                }
-                              },
-                              [
-                                _vm._v("Save "),
-                                _c("font-awesome-icon", {
-                                  attrs: { icon: ["fas", "save"] }
+                                _c(
+                                  "div",
+                                  { staticClass: "input-group-prepend" },
+                                  [
+                                    _c(
+                                      "div",
+                                      { staticClass: "input-group-text" },
+                                      [
+                                        _c("input", {
+                                          attrs: {
+                                            type: "checkbox",
+                                            "aria-label":
+                                              "Checkbox for following text input",
+                                            name: adi.adDescricao
+                                          }
+                                        })
+                                      ]
+                                    )
+                                  ]
+                                ),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    type: "text",
+                                    "aria-label": "Text input with checkbox",
+                                    disabled: ""
+                                  },
+                                  domProps: { value: adi.adDescricao }
                                 })
-                              ],
-                              1
+                              ]
                             )
-                          ]
-                        )
-                      ])
+                          }),
+                          _vm._v(" "),
+                          _c(
+                            "div",
+                            { staticClass: "d-flex justify-content-center" },
+                            [
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-outline-secondary",
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      _vm.prev()
+                                    }
+                                  }
+                                },
+                                [
+                                  _c("font-awesome-icon", {
+                                    attrs: { icon: ["fas", "chevron-left"] }
+                                  }),
+                                  _vm._v(" Previous")
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _c(
+                                "button",
+                                {
+                                  staticClass: "btn btn-outline-danger",
+                                  on: {
+                                    click: function($event) {
+                                      $event.preventDefault()
+                                      _vm.submit()
+                                    }
+                                  }
+                                },
+                                [
+                                  _vm._v("Save "),
+                                  _c("font-awesome-icon", {
+                                    attrs: { icon: ["fas", "save"] }
+                                  })
+                                ],
+                                1
+                              )
+                            ]
+                          )
+                        ],
+                        2
+                      )
                     : _vm._e()
                 ])
               ]),
@@ -49400,13 +49397,17 @@ var render = function() {
                         _c("span", [_vm._v("Valor")]),
                         _vm._v(" "),
                         _c("span", { staticClass: "f20" }, [_vm._v("R$")]),
-                        _c("span", { staticClass: "f32" }, [_vm._v("20")])
+                        _c("span", { staticClass: "f32" }, [
+                          _vm._v(_vm._s(_vm.valorTotal))
+                        ])
                       ]),
                       _vm._v(" "),
                       _c("div", [
                         _c("span", [_vm._v("Tempo")]),
                         _vm._v(" "),
-                        _c("span", { staticClass: "f32" }, [_vm._v("15")]),
+                        _c("span", { staticClass: "f32" }, [
+                          _vm._v(_vm._s(_vm.tempoTotal))
+                        ]),
                         _c("span", { staticClass: "f20" }, [_vm._v("min")])
                       ])
                     ])

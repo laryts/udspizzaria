@@ -14,4 +14,8 @@ class Sabor extends Model
     protected $fillable = [
         'sbDescricao', 'sbValor', 'sbTempo'
     ];
+    
+    public function pedidos(){
+        return $this->hasMany(Pedido::class);
+    }
 }
