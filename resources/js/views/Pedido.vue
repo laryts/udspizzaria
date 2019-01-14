@@ -113,6 +113,7 @@ export default {
             alert('Submit to blah and show blah and etc.');      
         },
         onChangeTamanho() {
+            this.reset();
             for (let index = 0; index < this.tamanhos.length; index++) {
                 const element = this.tamanhos[index];
                 if(element.idTamanhos == this.pedido.tamanho){
@@ -129,6 +130,10 @@ export default {
                     this.tempoTotal += element.sbTempo
                 }
             }
+        },
+        reset(){
+            this.valorTotal = 0;
+            this.tempoTotal = 0;
         }
     }
 }

@@ -13223,6 +13223,8 @@ __webpack_require__.r(__webpack_exports__);
       alert('Submit to blah and show blah and etc.');
     },
     onChangeTamanho: function onChangeTamanho() {
+      this.reset();
+
       for (var index = 0; index < this.tamanhos.length; index++) {
         var element = this.tamanhos[index];
 
@@ -13241,6 +13243,10 @@ __webpack_require__.r(__webpack_exports__);
           this.tempoTotal += element.sbTempo;
         }
       }
+    },
+    reset: function reset() {
+      this.valorTotal = 0;
+      this.tempoTotal = 0;
     }
   }
 });
