@@ -10534,3 +10534,7 @@ a.text-dark:focus {
   font-size: 38px !important;
 }
 
+.is-danger {
+  color: #e3342f;
+}
+

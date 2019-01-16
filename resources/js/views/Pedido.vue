@@ -7,49 +7,84 @@
                 <div class="row">
                     <div class="col-8">
                         <form>
+                            <!-- 1º Step - Choose Pizza's Size -->
                             <div v-if="step === 1">
-                                <h4>Qual o tamanho da sua fome?</h4>
+                                <h4 class="text-center mb-4">Qual o tamanho da sua fome?</h4>
+                                <span class="font-italic text-center">Selecione um tamanho para a sua pizza</span>
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <button class="btn btn-outline-danger" type="button">Tamanho</button>
                                     </div>
-                                    <select @change="onChangeTamanho()" v-model="pedido.tamanho" class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
-                                        <option value="" selected>Escolha o tamanho da sua pizza...</option>
+                                    <select 
+                                        @change="onChangeTamanho()" 
+                                        v-model="pedido.tamanho" 
+                                        v-validate="'required'" 
+                                        data-vv-as="Tamanho"
+                                        class="custom-select" 
+                                        id="inputGroupTamanho" 
+                                        name="tamanho" 
+                                        ref="tamanho">
+                                        <option value="" selected></option>
                                         <option :value="tam.idTamanhos" v-for="(tam, key) in tamanhos" :key="key">{{tam.tmDescricao}}</option>
                                     </select>
+                                </div> 
+                                <span v-show="errors.has('tamanho')" class="help is-danger">{{ errors.first('tamanho') }}</span>
+            
+                                                    
+                                <div class="d-flex justify-content-center mt-4">
+                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.tamanho == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
                                 </div>
-                    
-                                <h4>Vamos ver se tem bom gosto... Escolha um sabor</h4>
+                            </div>
+                            <!-- 2º Step - Choose Pizza's Flavor -->
+                            <div v-if="step === 2">                    
+                                <h4 class="text-center mb-4">Vamos ver se tem bom gosto... </h4>
+                                <span class="font-italic text-center">Agora selecione um sabor para sua pizza</span>
                                 <div class="input-group mb-3">
                                     <div class="input-group-prepend">
                                         <button class="btn btn-outline-danger" type="button">Sabor</button>
                                     </div>
-                                    <select @change="onChangeSabor()" v-model="pedido.sabor" class="custom-select" id="inputGroupSelect03" aria-label="Example select with button addon">
-                                        <option value="" selected>Escolha o sabor da sua pizza...</option>
+                                    <select 
+                                        @change="onChangeSabor()" 
+                                        v-model="pedido.sabor"  
+                                        v-validate="'required'"
+                                        data-vv-as="Sabor"
+                                        class="custom-select" 
+                                        id="inputGroupSabor" 
+                                        name="sabor"
+                                        ref="refSabor">
+                                        <option value="" selected></option>
                                         <option :value="sab.idSabores" v-for="(sab, key) in sabores" :key="key">{{sab.sbDescricao}}</option>
                                     </select>
                                 </div>
+                                <span v-show="errors.has('sabor')" class="help is-danger">{{ errors.first('sabor') }}</span>
                                 
-                                <div class="d-flex justify-content-center">
-                                    <button class="btn btn-outline-danger" @click.prevent="next()">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
+                                <div class="d-flex justify-content-center mt-4">
+                                    <button class="btn btn-outline-secondary" @click.prevent="prev()"><font-awesome-icon :icon="['fas', 'chevron-left']"/> Previous</button>
+                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.sabor == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
                                 </div>
                             </div>
-                            <div v-if="step === 2">
-                                <h4>Vamos deixar a pizza com a sua cara?</h4>
-                                <span>Escolha os adicionais</span>
+                            <div v-if="step === 3">
+                                <h4 class="text-center mb-4">Para finalizar... Quer deixar a pizza com a sua cara?</h4>
+                                <span class="font-italic text-center">Selecione os adicionais para a sua pizza</span>
                                 <div class="input-group mb-3" v-for="(adi, key) in adicionais" :key="key">
                                     <div class="input-group-prepend">
                                         <div class="input-group-text">
-                                        <input type="checkbox" aria-label="Checkbox for following text input" :name="adi.adDescricao">
+                                        <input 
+                                            type="checkbox" 
+                                            :id="key" 
+                                            :name="adi.adDescricao" 
+                                            :value="adi.adDescricao" 
+                                            v-model="pedido.adicional"
+                                            @change="onChangeAdicional($event)" >
                                         </div>
                                     </div>
-                                    <input type="text" class="form-control" aria-label="Text input with checkbox" :value="adi.adDescricao" disabled>
+                                    <div class="form-control" disabled>{{adi.adDescricao}}</div>
                                     <!-- Extra Bacon -->
                                 </div>
 
-                                <div class="d-flex justify-content-center">
+                                <div class="d-flex justify-content-center mt-4">
                                     <button class="btn btn-outline-secondary" @click.prevent="prev()"><font-awesome-icon :icon="['fas', 'chevron-left']"/> Previous</button>
-                                    <button class="btn btn-outline-danger" @click.prevent="submit()">Save <font-awesome-icon :icon="['fas', 'save']"/></button>
+                                    <button class="btn btn-outline-danger" @click.prevent="submit()" :disabled="errors.any()">Save</button>
                                 </div>
                             </div>
                         </form>
@@ -88,11 +123,19 @@ export default {
             pedido:{
                 tamanho:'',
                 sabor:'',
-                adicional:'',
+                adicional:[],
             },
+            erros:[],
+            validated:false,
             tamanhos:null,
             sabores:null,
             adicionais:null,
+            valorTamanho:0,
+            tempoTamanho:0,
+            valorSabor:0,
+            tempoSabor:0,
+            valorAdicional:0,
+            tempoAdicional:0,
             valorTotal:0,
             tempoTotal:0
         }
@@ -113,27 +156,44 @@ export default {
             alert('Submit to blah and show blah and etc.');      
         },
         onChangeTamanho() {
-            this.reset();
+            this.valorTamanho = this.tempoTamanho = 0;
             for (let index = 0; index < this.tamanhos.length; index++) {
                 const element = this.tamanhos[index];
                 if(element.idTamanhos == this.pedido.tamanho){
-                    this.valorTotal = element.tmValor
-                    this.tempoTotal = element.tmTempo
+                    this.valorTamanho = element.tmValor
+                    this.tempoTamanho = element.tmTempo
                 }
             }
+            this.sumTotal();
         },
         onChangeSabor() {
+            this.valorSabor = this.tempoSabor = 0;
             for (let index = 0; index < this.sabores.length; index++) {
                 const element = this.sabores[index];
                 if(element.idSabores == this.pedido.sabor){
-                    this.valorTotal += element.sbValor
-                    this.tempoTotal += element.sbTempo
+                    this.valorSabor += element.sbValor
+                    this.tempoSabor += element.sbTempo
                 }
             }
+            this.sumTotal();
         },
-        reset(){
-            this.valorTotal = 0;
-            this.tempoTotal = 0;
+        onChangeAdicional($event) {
+            this.valorAdicional = this.tempoAdicional = 0;
+            for (let index = 0; index < this.adicionais.length; index++) {
+                const element = this.adicionais[index];
+                var ads = this.pedido.adicional;
+                var ad = ads.includes(element.adDescricao);
+                if(ad){
+                    this.valorAdicional += element.adValor
+                    this.tempoAdicional += element.adTempo
+                }
+            }
+            this.sumTotal();
+            this.checkInput("sabor");
+        },
+        sumTotal(){
+            this.valorTotal = this.valorTamanho + this.valorSabor + this.valorAdicional;
+            this.tempoTotal = this.tempoTamanho + this.tempoSabor + this.tempoAdicional;
         }
     }
 }

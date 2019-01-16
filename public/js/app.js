@@ -13179,6 +13179,41 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -13190,11 +13225,19 @@ __webpack_require__.r(__webpack_exports__);
       pedido: {
         tamanho: '',
         sabor: '',
-        adicional: ''
+        adicional: []
       },
+      erros: [],
+      validated: false,
       tamanhos: null,
       sabores: null,
       adicionais: null,
+      valorTamanho: 0,
+      tempoTamanho: 0,
+      valorSabor: 0,
+      tempoSabor: 0,
+      valorAdicional: 0,
+      tempoAdicional: 0,
       valorTotal: 0,
       tempoTotal: 0
     };
@@ -13223,30 +13266,53 @@ __webpack_require__.r(__webpack_exports__);
       alert('Submit to blah and show blah and etc.');
     },
     onChangeTamanho: function onChangeTamanho() {
-      this.reset();
+      this.valorTamanho = this.tempoTamanho = 0;
 
       for (var index = 0; index < this.tamanhos.length; index++) {
         var element = this.tamanhos[index];
 
         if (element.idTamanhos == this.pedido.tamanho) {
-          this.valorTotal = element.tmValor;
-          this.tempoTotal = element.tmTempo;
+          this.valorTamanho = element.tmValor;
+          this.tempoTamanho = element.tmTempo;
         }
       }
+
+      this.sumTotal();
     },
     onChangeSabor: function onChangeSabor() {
+      this.valorSabor = this.tempoSabor = 0;
+
       for (var index = 0; index < this.sabores.length; index++) {
         var element = this.sabores[index];
 
         if (element.idSabores == this.pedido.sabor) {
-          this.valorTotal += element.sbValor;
-          this.tempoTotal += element.sbTempo;
+          this.valorSabor += element.sbValor;
+          this.tempoSabor += element.sbTempo;
         }
       }
+
+      this.sumTotal();
     },
-    reset: function reset() {
-      this.valorTotal = 0;
-      this.tempoTotal = 0;
+    onChangeAdicional: function onChangeAdicional($event) {
+      this.valorAdicional = this.tempoAdicional = 0;
+
+      for (var index = 0; index < this.adicionais.length; index++) {
+        var element = this.adicionais[index];
+        var ads = this.pedido.adicional;
+        var ad = ads.includes(element.adDescricao);
+
+        if (ad) {
+          this.valorAdicional += element.adValor;
+          this.tempoAdicional += element.adTempo;
+        }
+      }
+
+      this.sumTotal();
+      this.checkInput("sabor");
+    },
+    sumTotal: function sumTotal() {
+      this.valorTotal = this.valorTamanho + this.valorSabor + this.valorAdicional;
+      this.tempoTotal = this.tempoTamanho + this.tempoSabor + this.tempoAdicional;
     }
   }
 });
@@ -49106,7 +49172,13 @@ var render = function() {
                 _c("form", [
                   _vm.step === 1
                     ? _c("div", [
-                        _c("h4", [_vm._v("Qual o tamanho da sua fome?")]),
+                        _c("h4", { staticClass: "text-center mb-4" }, [
+                          _vm._v("Qual o tamanho da sua fome?")
+                        ]),
+                        _vm._v(" "),
+                        _c("span", { staticClass: "font-italic text-center" }, [
+                          _vm._v("Selecione um tamanho para a sua pizza")
+                        ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "input-group mb-3" }, [
                           _c("div", { staticClass: "input-group-prepend" }, [
@@ -49129,12 +49201,20 @@ var render = function() {
                                   rawName: "v-model",
                                   value: _vm.pedido.tamanho,
                                   expression: "pedido.tamanho"
+                                },
+                                {
+                                  name: "validate",
+                                  rawName: "v-validate",
+                                  value: "required",
+                                  expression: "'required'"
                                 }
                               ],
+                              ref: "tamanho",
                               staticClass: "custom-select",
                               attrs: {
-                                id: "inputGroupSelect03",
-                                "aria-label": "Example select with button addon"
+                                "data-vv-as": "Tamanho",
+                                id: "inputGroupTamanho",
+                                name: "tamanho"
                               },
                               on: {
                                 change: [
@@ -49163,11 +49243,9 @@ var render = function() {
                               }
                             },
                             [
-                              _c(
-                                "option",
-                                { attrs: { value: "", selected: "" } },
-                                [_vm._v("Escolha o tamanho da sua pizza...")]
-                              ),
+                              _c("option", {
+                                attrs: { value: "", selected: "" }
+                              }),
                               _vm._v(" "),
                               _vm._l(_vm.tamanhos, function(tam, key) {
                                 return _c(
@@ -49184,10 +49262,63 @@ var render = function() {
                           )
                         ]),
                         _vm._v(" "),
-                        _c("h4", [
-                          _vm._v(
-                            "Vamos ver se tem bom gosto... Escolha um sabor"
-                          )
+                        _c(
+                          "span",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.errors.has("tamanho"),
+                                expression: "errors.has('tamanho')"
+                              }
+                            ],
+                            staticClass: "help is-danger"
+                          },
+                          [_vm._v(_vm._s(_vm.errors.first("tamanho")))]
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "div",
+                          { staticClass: "d-flex justify-content-center mt-4" },
+                          [
+                            _c(
+                              "button",
+                              {
+                                staticClass: "btn btn-outline-danger",
+                                attrs: {
+                                  disabled:
+                                    _vm.errors.any() ||
+                                    this.pedido.tamanho == ""
+                                },
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    _vm.next()
+                                  }
+                                }
+                              },
+                              [
+                                _vm._v("Próximo "),
+                                _c("font-awesome-icon", {
+                                  attrs: { icon: ["fas", "chevron-right"] }
+                                })
+                              ],
+                              1
+                            )
+                          ]
+                        )
+                      ])
+                    : _vm._e(),
+                  _vm._v(" "),
+                  _vm.step === 2
+                    ? _c("div", [
+                        _c("h4", { staticClass: "text-center mb-4" }, [
+                          _vm._v("Vamos ver se tem bom gosto... ")
+                        ]),
+                        _vm._v(" "),
+                        _c("span", { staticClass: "font-italic text-center" }, [
+                          _vm._v("Agora selecione um sabor para sua pizza")
                         ]),
                         _vm._v(" "),
                         _c("div", { staticClass: "input-group mb-3" }, [
@@ -49211,12 +49342,20 @@ var render = function() {
                                   rawName: "v-model",
                                   value: _vm.pedido.sabor,
                                   expression: "pedido.sabor"
+                                },
+                                {
+                                  name: "validate",
+                                  rawName: "v-validate",
+                                  value: "required",
+                                  expression: "'required'"
                                 }
                               ],
+                              ref: "refSabor",
                               staticClass: "custom-select",
                               attrs: {
-                                id: "inputGroupSelect03",
-                                "aria-label": "Example select with button addon"
+                                "data-vv-as": "Sabor",
+                                id: "inputGroupSabor",
+                                name: "sabor"
                               },
                               on: {
                                 change: [
@@ -49245,11 +49384,9 @@ var render = function() {
                               }
                             },
                             [
-                              _c(
-                                "option",
-                                { attrs: { value: "", selected: "" } },
-                                [_vm._v("Escolha o sabor da sua pizza...")]
-                              ),
+                              _c("option", {
+                                attrs: { value: "", selected: "" }
+                              }),
                               _vm._v(" "),
                               _vm._l(_vm.sabores, function(sab, key) {
                                 return _c(
@@ -49267,13 +49404,53 @@ var render = function() {
                         ]),
                         _vm._v(" "),
                         _c(
+                          "span",
+                          {
+                            directives: [
+                              {
+                                name: "show",
+                                rawName: "v-show",
+                                value: _vm.errors.has("sabor"),
+                                expression: "errors.has('sabor')"
+                              }
+                            ],
+                            staticClass: "help is-danger"
+                          },
+                          [_vm._v(_vm._s(_vm.errors.first("sabor")))]
+                        ),
+                        _vm._v(" "),
+                        _c(
                           "div",
-                          { staticClass: "d-flex justify-content-center" },
+                          { staticClass: "d-flex justify-content-center mt-4" },
                           [
                             _c(
                               "button",
                               {
+                                staticClass: "btn btn-outline-secondary",
+                                on: {
+                                  click: function($event) {
+                                    $event.preventDefault()
+                                    _vm.prev()
+                                  }
+                                }
+                              },
+                              [
+                                _c("font-awesome-icon", {
+                                  attrs: { icon: ["fas", "chevron-left"] }
+                                }),
+                                _vm._v(" Previous")
+                              ],
+                              1
+                            ),
+                            _vm._v(" "),
+                            _c(
+                              "button",
+                              {
                                 staticClass: "btn btn-outline-danger",
+                                attrs: {
+                                  disabled:
+                                    _vm.errors.any() || this.pedido.sabor == ""
+                                },
                                 on: {
                                   click: function($event) {
                                     $event.preventDefault()
@@ -49294,15 +49471,21 @@ var render = function() {
                       ])
                     : _vm._e(),
                   _vm._v(" "),
-                  _vm.step === 2
+                  _vm.step === 3
                     ? _c(
                         "div",
                         [
-                          _c("h4", [
-                            _vm._v("Vamos deixar a pizza com a sua cara?")
+                          _c("h4", { staticClass: "text-center mb-4" }, [
+                            _vm._v(
+                              "Para finalizar... Quer deixar a pizza com a sua cara?"
+                            )
                           ]),
                           _vm._v(" "),
-                          _c("span", [_vm._v("Escolha os adicionais")]),
+                          _c(
+                            "span",
+                            { staticClass: "font-italic text-center" },
+                            [_vm._v("Selecione os adicionais para a sua pizza")]
+                          ),
                           _vm._v(" "),
                           _vm._l(_vm.adicionais, function(adi, key) {
                             return _c(
@@ -49318,11 +49501,72 @@ var render = function() {
                                       { staticClass: "input-group-text" },
                                       [
                                         _c("input", {
+                                          directives: [
+                                            {
+                                              name: "model",
+                                              rawName: "v-model",
+                                              value: _vm.pedido.adicional,
+                                              expression: "pedido.adicional"
+                                            }
+                                          ],
                                           attrs: {
                                             type: "checkbox",
-                                            "aria-label":
-                                              "Checkbox for following text input",
+                                            id: key,
                                             name: adi.adDescricao
+                                          },
+                                          domProps: {
+                                            value: adi.adDescricao,
+                                            checked: Array.isArray(
+                                              _vm.pedido.adicional
+                                            )
+                                              ? _vm._i(
+                                                  _vm.pedido.adicional,
+                                                  adi.adDescricao
+                                                ) > -1
+                                              : _vm.pedido.adicional
+                                          },
+                                          on: {
+                                            change: [
+                                              function($event) {
+                                                var $$a = _vm.pedido.adicional,
+                                                  $$el = $event.target,
+                                                  $$c = $$el.checked
+                                                    ? true
+                                                    : false
+                                                if (Array.isArray($$a)) {
+                                                  var $$v = adi.adDescricao,
+                                                    $$i = _vm._i($$a, $$v)
+                                                  if ($$el.checked) {
+                                                    $$i < 0 &&
+                                                      _vm.$set(
+                                                        _vm.pedido,
+                                                        "adicional",
+                                                        $$a.concat([$$v])
+                                                      )
+                                                  } else {
+                                                    $$i > -1 &&
+                                                      _vm.$set(
+                                                        _vm.pedido,
+                                                        "adicional",
+                                                        $$a
+                                                          .slice(0, $$i)
+                                                          .concat(
+                                                            $$a.slice($$i + 1)
+                                                          )
+                                                      )
+                                                  }
+                                                } else {
+                                                  _vm.$set(
+                                                    _vm.pedido,
+                                                    "adicional",
+                                                    $$c
+                                                  )
+                                                }
+                                              },
+                                              function($event) {
+                                                _vm.onChangeAdicional($event)
+                                              }
+                                            ]
                                           }
                                         })
                                       ]
@@ -49330,22 +49574,23 @@ var render = function() {
                                   ]
                                 ),
                                 _vm._v(" "),
-                                _c("input", {
-                                  staticClass: "form-control",
-                                  attrs: {
-                                    type: "text",
-                                    "aria-label": "Text input with checkbox",
-                                    disabled: ""
+                                _c(
+                                  "div",
+                                  {
+                                    staticClass: "form-control",
+                                    attrs: { disabled: "" }
                                   },
-                                  domProps: { value: adi.adDescricao }
-                                })
+                                  [_vm._v(_vm._s(adi.adDescricao))]
+                                )
                               ]
                             )
                           }),
                           _vm._v(" "),
                           _c(
                             "div",
-                            { staticClass: "d-flex justify-content-center" },
+                            {
+                              staticClass: "d-flex justify-content-center mt-4"
+                            },
                             [
                               _c(
                                 "button",
@@ -49371,6 +49616,7 @@ var render = function() {
                                 "button",
                                 {
                                   staticClass: "btn btn-outline-danger",
+                                  attrs: { disabled: _vm.errors.any() },
                                   on: {
                                     click: function($event) {
                                       $event.preventDefault()
@@ -49378,13 +49624,7 @@ var render = function() {
                                     }
                                   }
                                 },
-                                [
-                                  _vm._v("Save "),
-                                  _c("font-awesome-icon", {
-                                    attrs: { icon: ["fas", "save"] }
-                                  })
-                                ],
-                                1
+                                [_vm._v("Save")]
                               )
                             ]
                           )
@@ -49510,15 +49750,17 @@ module.exports = function(module) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.common.js");
 /* harmony import */ var vue__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(vue__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
-/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
-/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js");
-/* harmony import */ var _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/vue-fontawesome */ "./node_modules/@fortawesome/vue-fontawesome/index.es.js");
-/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_free_regular_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-regular-svg-icons */ "./node_modules/@fortawesome/free-regular-svg-icons/index.es.js");
-/* harmony import */ var _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-brands-svg-icons */ "./node_modules/@fortawesome/free-brands-svg-icons/index.es.js");
-/* harmony import */ var _views_App__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./views/App */ "./resources/js/views/App.vue");
+/* harmony import */ var vee_validate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vee-validate */ "./node_modules/vee-validate/dist/vee-validate.esm.js");
+/* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
+/* harmony import */ var _routes__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./routes */ "./resources/js/routes.js");
+/* harmony import */ var _fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @fortawesome/fontawesome-svg-core */ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js");
+/* harmony import */ var _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @fortawesome/vue-fontawesome */ "./node_modules/@fortawesome/vue-fontawesome/index.es.js");
+/* harmony import */ var _fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @fortawesome/free-solid-svg-icons */ "./node_modules/@fortawesome/free-solid-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_free_regular_svg_icons__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @fortawesome/free-regular-svg-icons */ "./node_modules/@fortawesome/free-regular-svg-icons/index.es.js");
+/* harmony import */ var _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @fortawesome/free-brands-svg-icons */ "./node_modules/@fortawesome/free-brands-svg-icons/index.es.js");
+/* harmony import */ var _views_App__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./views/App */ "./resources/js/views/App.vue");
 __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
+
 
 
 
@@ -49532,18 +49774,22 @@ __webpack_require__(/*! ./bootstrap */ "./resources/js/bootstrap.js");
 
  // Init Font Awesome
 
-_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_3__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_5__["fas"], _fortawesome_free_regular_svg_icons__WEBPACK_IMPORTED_MODULE_6__["far"], _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_7__["fab"]);
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_4__["FontAwesomeIcon"]); // Init Vue Router
+_fortawesome_fontawesome_svg_core__WEBPACK_IMPORTED_MODULE_4__["library"].add(_fortawesome_free_solid_svg_icons__WEBPACK_IMPORTED_MODULE_6__["fas"], _fortawesome_free_regular_svg_icons__WEBPACK_IMPORTED_MODULE_7__["far"], _fortawesome_free_brands_svg_icons__WEBPACK_IMPORTED_MODULE_8__["fab"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.component('font-awesome-icon', _fortawesome_vue_fontawesome__WEBPACK_IMPORTED_MODULE_5__["FontAwesomeIcon"]); // Init Vue Router
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]);
+var router = new vue_router__WEBPACK_IMPORTED_MODULE_2__["default"]({
   mode: 'history',
-  routes: _routes__WEBPACK_IMPORTED_MODULE_2__["routes"]
+  routes: _routes__WEBPACK_IMPORTED_MODULE_3__["routes"]
+}); // Init Vee Validate
+
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vee_validate__WEBPACK_IMPORTED_MODULE_1__["default"], {
+  events: 'change'
 });
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
   el: '#app',
   components: {
-    App: _views_App__WEBPACK_IMPORTED_MODULE_8__["default"]
+    App: _views_App__WEBPACK_IMPORTED_MODULE_9__["default"]
   },
   router: router
 });

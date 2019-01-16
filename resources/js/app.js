@@ -1,6 +1,7 @@
 
 require('./bootstrap');
 import Vue from 'vue'
+import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router'
 import { routes } from './routes'
 // FontAwesome
@@ -22,6 +23,11 @@ Vue.use(VueRouter)
 const router = new VueRouter({
     mode: 'history',
     routes
+});
+
+// Init Vee Validate
+Vue.use(VeeValidate, {
+    events: 'change'
 });
 
 const app = new Vue({
