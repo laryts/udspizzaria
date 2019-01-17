@@ -18,6 +18,7 @@ class CreateAdicionaisTable extends Migration
             $table->string('adDescricao');
             $table->float('adValor');
             $table->integer('adTempo');
+            $table->timestamps();
         });
     }
 

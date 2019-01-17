@@ -24,6 +24,7 @@ class CreateAdicionaisdospedidosTable extends Migration
                 references('idAdicionais')->
                 on('adicionais')->
                 onDelete('cascade');
+            $table->timestamps();
         });
     }
 

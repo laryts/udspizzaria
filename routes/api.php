@@ -2,30 +2,34 @@
 
 use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
-*/
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-// Route::apiResources([
-//     'tamanhos' => 'TamanhoController',
-//     'sabores' => 'SaborController'
-// ]);
+Route::post('auth/register', 'AuthController@register');
+Route::post('auth/login', 'AuthController@login');
+Route::group(['middleware' => 'jwt.auth'], function(){
+	Route::get('auth/user', 'AuthController@user');
+	Route::post('auth/logout', 'AuthController@logout');
+});
+Route::group(['middleware' => 'jwt.refresh'], function(){
+	Route::get('auth/refresh', 'AuthController@refresh');
+});
 
 Route::namespace('API')->name('api.')->group(function(){
+    // Tamanho
     Route::get('/tamanhos', 'TamanhoController@index')->name('tamanhos');
+    // Sabores
     Route::get('/sabores', 'SaborController@showAll')->name('sabores');
+    // Adicionais
     Route::get('/adicionais', 'AdicionalController@showAll')->name('adicionais');
+    // Pedido
+    Route::post('/pedido/create', 'PedidoController@store');
+    Route::get('/pedido/edit/{id}', 'PedidoController@edit');
+    Route::post('/pedido/update/{id}', 'PedidoController@update');
+    Route::delete('/pedido/delete/{id}', 'PedidoController@delete');
+    Route::get('/pedidos', 'PedidoController@showAll');
 });
 
 // Route::get('/tamanhos', 'TamanhoController@showAll');

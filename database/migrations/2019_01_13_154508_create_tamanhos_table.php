@@ -18,6 +18,7 @@ class CreateTamanhosTable extends Migration
             $table->string('tmDescricao');
             $table->float('tmValor');
             $table->integer('tmTempo');
+            $table->timestamps();
         }); 
     }
 

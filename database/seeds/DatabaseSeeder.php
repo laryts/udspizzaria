@@ -12,5 +12,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $this->call(TamanhoTableSeeder::class);
+        $this->call(SaborTableSeeder::class);
+        $this->call(AdicionalTableSeeder::class);
     }
 }

@@ -17,7 +17,7 @@
                                     </div>
                                     <select 
                                         @change="onChangeTamanho()" 
-                                        v-model="pedido.tamanho" 
+                                        v-model="pedido.idTamanho" 
                                         v-validate="'required'" 
                                         data-vv-as="Tamanho"
                                         class="custom-select" 
@@ -32,7 +32,7 @@
             
                                                     
                                 <div class="d-flex justify-content-center mt-4">
-                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.tamanho == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
+                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.idTamanho == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
                                 </div>
                             </div>
                             <!-- 2º Step - Choose Pizza's Flavor -->
@@ -45,7 +45,7 @@
                                     </div>
                                     <select 
                                         @change="onChangeSabor()" 
-                                        v-model="pedido.sabor"  
+                                        v-model="pedido.idSabor"  
                                         v-validate="'required'"
                                         data-vv-as="Sabor"
                                         class="custom-select" 
@@ -60,7 +60,7 @@
                                 
                                 <div class="d-flex justify-content-center mt-4">
                                     <button class="btn btn-outline-secondary" @click.prevent="prev()"><font-awesome-icon :icon="['fas', 'chevron-left']"/> Previous</button>
-                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.sabor == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
+                                    <button class="btn btn-outline-danger" @click.prevent="next()"  :disabled="errors.any()  || this.pedido.idSabor == ''">Próximo <font-awesome-icon :icon="['fas', 'chevron-right']"/></button>
                                 </div>
                             </div>
                             <div v-if="step === 3">
@@ -73,7 +73,7 @@
                                             type="checkbox" 
                                             :id="key" 
                                             :name="adi.adDescricao" 
-                                            :value="adi.adDescricao" 
+                                            :value="adi.idAdicionais" 
                                             v-model="pedido.adicional"
                                             @change="onChangeAdicional($event)" >
                                         </div>
@@ -121,9 +121,12 @@ export default {
         return {
             step:1,
             pedido:{
-                tamanho:'',
-                sabor:'',
+                idUser: this.$auth.user().id,
+                idTamanho:0,
+                idSabor:0,
                 adicional:[],
+                pdValor:0,
+                pdTempo:0
             },
             erros:[],
             validated:false,
@@ -141,9 +144,9 @@ export default {
         }
     },
     mounted () {
-        axios.get('/api/tamanhos').then(response => (this.tamanhos = response.data))
-        axios.get('/api/sabores').then(response => (this.sabores = response.data))
-        axios.get('/api/adicionais').then(response => (this.adicionais = response.data))
+        axios.get('/tamanhos').then(response => (this.tamanhos = response.data))
+        axios.get('/sabores').then(response => (this.sabores = response.data))
+        axios.get('/adicionais').then(response => (this.adicionais = response.data))
     },
     methods:{
         prev() {
@@ -153,13 +156,17 @@ export default {
             this.step++;
         },
         submit() {
-            alert('Submit to blah and show blah and etc.');      
+            this.axios.post('/pedido/create', this.pedido).then((response) => {
+                if(response == 'success'){
+                    this.$router.push({name: 'home'});
+                }
+            });            
         },
         onChangeTamanho() {
             this.valorTamanho = this.tempoTamanho = 0;
             for (let index = 0; index < this.tamanhos.length; index++) {
                 const element = this.tamanhos[index];
-                if(element.idTamanhos == this.pedido.tamanho){
+                if(element.idTamanhos == this.pedido.idTamanho){
                     this.valorTamanho = element.tmValor
                     this.tempoTamanho = element.tmTempo
                 }
@@ -170,7 +177,7 @@ export default {
             this.valorSabor = this.tempoSabor = 0;
             for (let index = 0; index < this.sabores.length; index++) {
                 const element = this.sabores[index];
-                if(element.idSabores == this.pedido.sabor){
+                if(element.idSabores == this.pedido.idSabor){
                     this.valorSabor += element.sbValor
                     this.tempoSabor += element.sbTempo
                 }
@@ -182,18 +189,19 @@ export default {
             for (let index = 0; index < this.adicionais.length; index++) {
                 const element = this.adicionais[index];
                 var ads = this.pedido.adicional;
-                var ad = ads.includes(element.adDescricao);
+                var ad = ads.includes(element.idAdicionais);
                 if(ad){
                     this.valorAdicional += element.adValor
                     this.tempoAdicional += element.adTempo
                 }
             }
             this.sumTotal();
-            this.checkInput("sabor");
         },
         sumTotal(){
             this.valorTotal = this.valorTamanho + this.valorSabor + this.valorAdicional;
             this.tempoTotal = this.tempoTamanho + this.tempoSabor + this.tempoAdicional;
+            this.pedido.pdValor = this.valorTotal;
+            this.pedido.pdTempo = this.tempoTotal;
         }
     }
 }

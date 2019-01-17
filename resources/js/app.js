@@ -3,6 +3,8 @@ require('./bootstrap');
 import Vue from 'vue'
 import VeeValidate from 'vee-validate';
 import VueRouter from 'vue-router'
+import VueAxios from 'vue-axios';
+import axios from 'axios';
 import { routes } from './routes'
 // FontAwesome
 import { library, config } from '@fortawesome/fontawesome-svg-core'
@@ -25,9 +27,23 @@ const router = new VueRouter({
     routes
 });
 
+Vue.router = router
+
+// Init Axios
+Vue.use(VueAxios, axios);
+
+axios.defaults.baseURL = 'http://localhost:3000/api';
+
 // Init Vee Validate
 Vue.use(VeeValidate, {
     events: 'change'
+});
+
+// Init Vue-Auth
+Vue.use(require('@websanova/vue-auth'), {
+    auth: require('@websanova/vue-auth/drivers/auth/bearer.js'),
+    http: require('@websanova/vue-auth/drivers/http/axios.1.x.js'),
+    router: require('@websanova/vue-auth/drivers/router/vue-router.2.x.js'),
 });
 
 const app = new Vue({

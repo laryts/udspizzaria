@@ -30,12 +30,13 @@ class CreatePedidosTable extends Migration
 
             $table->integer('idUsers')->unsigned();
             $table->foreign('idUsers')->
-                references('idUsers')->
+                references('id')->
                 on('users')->
                 onDelete('cascade');
                 
             $table->float('pdValor');
             $table->integer('pdTempo');
+            $table->timestamps();
         });
     }
 

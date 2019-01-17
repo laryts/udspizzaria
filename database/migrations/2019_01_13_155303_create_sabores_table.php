@@ -14,7 +14,10 @@ class CreateSaboresTable extends Migration
     public function up()
     {
         Schema::create('sabores', function (Blueprint $table) {
-            $table->increments('id');
+            $table->increments('idSabores');
+            $table->string('sbDescricao');
+            $table->float('sbValor');
+            $table->integer('sbTempo');
             $table->timestamps();
         });
     }
