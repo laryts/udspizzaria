@@ -14400,7 +14400,7 @@ __webpack_require__.r(__webpack_exports__);
           }
         },
         rememberMe: true,
-        redirect: '/pedido',
+        redirect: '/home',
         fetchUser: true
       });
     }
