@@ -68,4 +68,8 @@ class TamanhoController extends Controller
     {
         //
     }
+
+    public function find($id){
+        return Tamanho::find($id);
+    }
 }

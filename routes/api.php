@@ -20,16 +20,20 @@ Route::group(['middleware' => 'jwt.refresh'], function(){
 Route::namespace('API')->name('api.')->group(function(){
     // Tamanho
     Route::get('/tamanhos', 'TamanhoController@index')->name('tamanhos');
+    Route::get('/tamanho/{id}', 'TamanhoController@find');
     // Sabores
     Route::get('/sabores', 'SaborController@showAll')->name('sabores');
+    Route::get('/sabor/{id}', 'SaborController@find');
     // Adicionais
     Route::get('/adicionais', 'AdicionalController@showAll')->name('adicionais');
     // Pedido
     Route::post('/pedido/create', 'PedidoController@store');
+    Route::get('/pedido/{id}', 'PedidoController@find');
     Route::get('/pedido/edit/{id}', 'PedidoController@edit');
     Route::post('/pedido/update/{id}', 'PedidoController@update');
     Route::delete('/pedido/delete/{id}', 'PedidoController@delete');
     Route::get('/pedidos', 'PedidoController@showAll');
+    Route::get('/pedido_adicionais/{id}', 'PedidoController@findAdicionais');
 });
 
 // Route::get('/tamanhos', 'TamanhoController@showAll');

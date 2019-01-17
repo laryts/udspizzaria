@@ -10,9 +10,10 @@ class Pedido extends Model
     // use SoftDeletes;
 
     protected $table = 'pedidos';
+    protected $primaryKey = 'idPedidos';
 
     protected $fillable = [
-        'idTamanhos', 'idSabores', 'idUsers', 'pdValor', 'pdTempo' 
+        'idTamanhos', 'idSabores', 'idUsers', 'pdValor', 'pdTempo',
     ];
 
     public function user()
@@ -30,8 +31,8 @@ class Pedido extends Model
         return $this->belongsTo(Sabor::class, 'idSabores');
     }
 
-    public function adicional()
+    public function adicionais()
     {
-        return $this->belongsTo(Adicional::class, 'idAdicionais');
+        return $this->belongsToMany(Adicional::class, 'adicionaisdospedidos', 'idPedidos', 'idAdicionais');
     }
 }

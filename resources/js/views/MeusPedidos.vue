@@ -22,35 +22,46 @@ export default {
     },
     data(){
         return {
-            pedidos:null
+            pedidos:null,
+            pedido:{
+                idUser: this.$auth.user().id,
+                idTamanho:0,
+                idSabor:0,
+                adicional:[],
+                pdValor:0,
+                pdTempo:0
+            },
         }
     },
     mounted () {
-        axios.get('/pedidos').then(response => (this.pedidos = response.data))
+        axios.get('/pedidos').then(response => {
+            // this.pedidos = response
+            var pedidos = [];
+            var ped;
+            var pedido = response.data;
+            for (const key in pedido) {
+                const element = pedido[key];
+                // ped[element.idPedidos] = {
+                //     'idPedido': element.idPedidos,
+                // };
+                // pedidos = ped;
+
+                axios.get('/tamanho/'+element.idTamanhos).then(res => {
+                    element.tamanho = res.data.tmDescricao
+                })
+                axios.get('/sabor/'+element.idSabores).then(res => {
+                    element.sabor = res.data.sbDescricao
+                })
+                axios.get('/pedido_adicionais/'+element.idPedidos).then(res => {
+                    element.adicionais = res.data
+                    console.log(res.data)
+                })
+                console.log(element);
+
+            }
+        });
     },
     methods:{
-        login(){
-            var app = this
-            this.$auth.login({
-                params: {
-                    email: app.email,
-                    password: app.password
-                }, 
-                success: function (res) {
-                    console.log(res);
-                },
-                error: function (res) {
-                    var status = res.response.data;
-                    if(status.status == 'error'){
-                        this.error = true;
-                        this.msg = status.msg
-                    }
-                },
-                rememberMe: true,
-                redirect: '/pedido',
-                fetchUser: true,
-            });       
-        },
     }
 }
 </script>

@@ -128,8 +128,6 @@ export default {
                 pdValor:0,
                 pdTempo:0
             },
-            erros:[],
-            validated:false,
             tamanhos:null,
             sabores:null,
             adicionais:null,
@@ -157,9 +155,7 @@ export default {
         },
         submit() {
             this.axios.post('/pedido/create', this.pedido).then((response) => {
-                if(response == 'success'){
-                    this.$router.push({name: 'home'});
-                }
+                this.$router.push({name: 'home'});
             });            
         },
         onChangeTamanho() {

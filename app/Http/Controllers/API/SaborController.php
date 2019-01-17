@@ -67,4 +67,8 @@ class SaborController extends Controller
     {
         //
     }
+    
+    public function find($id){
+        return Sabor::find($id);
+    }
 }

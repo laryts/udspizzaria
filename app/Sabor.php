@@ -10,6 +10,7 @@ class Sabor extends Model
     // use SoftDeletes;
 
     protected $table = 'sabores';
+    protected $primaryKey = 'idSabores';
 
     protected $fillable = [
         'sbDescricao', 'sbValor', 'sbTempo'

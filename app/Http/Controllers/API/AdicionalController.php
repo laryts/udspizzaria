@@ -67,4 +67,7 @@ class AdicionalController extends Controller
     {
         //
     }
+
+    public function find($id){
+    }
 }

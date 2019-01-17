@@ -5,6 +5,7 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Pedido;
+use App\Adicional;
 
 class PedidoController extends Controller
 {
@@ -26,6 +27,10 @@ class PedidoController extends Controller
         ]);
 
         $pedido->save();
+
+        $adicional = Adicional::find($request->get('adicional'));
+        
+        $pedido->adicionais()->attach($adicional);
 
         return response()->json('success');
     }
@@ -67,5 +72,16 @@ class PedidoController extends Controller
     // Listando tamanhos
     public function showAll(){
         return Pedido::all();
+    }
+
+    public function find($id){
+        return Pedido::find($id);
+    }
+
+    public function findAdicionais($id){
+        $adicionais = Pedido::whereHas('adicionais', function($query){
+            $query->where('idPedidos', '=', $id);
+        });
+        return $adicionais->get();
     }
 }

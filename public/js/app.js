@@ -1,4 +1,4 @@
-(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/js/app"],{
+(window["webpackJsonp"] = window["webpackJsonp"] || []).push([["/public/js/app"],{
 
 /***/ "./node_modules/@fortawesome/fontawesome-svg-core/index.es.js":
 /*!********************************************************************!*\
@@ -14442,41 +14442,49 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      pedidos: null
+      pedidos: null,
+      pedido: {
+        idUser: this.$auth.user().id,
+        idTamanho: 0,
+        idSabor: 0,
+        adicional: [],
+        pdValor: 0,
+        pdTempo: 0
+      }
     };
   },
   mounted: function mounted() {
-    var _this = this;
-
     axios.get('/pedidos').then(function (response) {
-      return _this.pedidos = response.data;
+      // this.pedidos = response
+      var pedidos = [];
+      var ped;
+      var pedido = response.data;
+
+      var _loop = function _loop(key) {
+        var element = pedido[key]; // ped[element.idPedidos] = {
+        //     'idPedido': element.idPedidos,
+        // };
+        // pedidos = ped;
+
+        axios.get('/tamanho/' + element.idTamanhos).then(function (res) {
+          element.tamanho = res.data.tmDescricao;
+        });
+        axios.get('/sabor/' + element.idSabores).then(function (res) {
+          element.sabor = res.data.sbDescricao;
+        });
+        axios.get('/pedido_adicionais/' + element.idPedidos).then(function (res) {
+          element.adicionais = res.data;
+          console.log(res.data);
+        });
+        console.log(element);
+      };
+
+      for (var key in pedido) {
+        _loop(key);
+      }
     });
   },
-  methods: {
-    login: function login() {
-      var app = this;
-      this.$auth.login({
-        params: {
-          email: app.email,
-          password: app.password
-        },
-        success: function success(res) {
-          console.log(res);
-        },
-        error: function error(res) {
-          var status = res.response.data;
-
-          if (status.status == 'error') {
-            this.error = true;
-            this.msg = status.msg;
-          }
-        },
-        rememberMe: true,
-        redirect: '/pedido',
-        fetchUser: true
-      });
-    }
-  }
+  methods: {}
 });
 
 /***/ }),
@@ -14657,8 +14665,6 @@ __webpack_require__.r(__webpack_exports__);
         pdValor: 0,
         pdTempo: 0
       },
-      erros: [],
-      validated: false,
       tamanhos: null,
       sabores: null,
       adicionais: null,
@@ -14696,11 +14702,9 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       this.axios.post('/pedido/create', this.pedido).then(function (response) {
-        if (response == 'success') {
-          _this2.$router.push({
-            name: 'home'
-          });
-        }
+        _this2.$router.push({
+          name: 'home'
+        });
       });
     },
     onChangeTamanho: function onChangeTamanho() {
@@ -52831,4 +52835,4 @@ module.exports = __webpack_require__(/*! C:\laragon\www\UDSPizzaria\resources\sa
 
 /***/ })
 
-},[[0,"/js/manifest","/js/vendor"]]]);
+},[[0,"/public/js/manifest","/public/js/vendor"]]]);
