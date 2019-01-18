@@ -32,8 +32,13 @@
         ],
 
 - Open terminal and run:
-> **php artisan migrate**
+> php artisan migrate
 
 - Open terminal and run:
 > php artisan db:seed
 
+- Start server:
+> php artisan server
+
+- To run:
+> npm run watch
