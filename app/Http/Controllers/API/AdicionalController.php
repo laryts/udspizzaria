@@ -5,6 +5,8 @@ namespace App\Http\Controllers\API;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Adicional;
+use App\Pedido;
+use DB;
 
 class AdicionalController extends Controller
 {
@@ -69,5 +71,12 @@ class AdicionalController extends Controller
     }
 
     public function find($id){
+    }
+
+    public function findAdicionaisbyPedido($id){
+        return DB::table('adicionais')
+        ->join('adicionaisdospedidos', 'adicionais.idAdicionais', '=', 'adicionaisdospedidos.idAdicionais')
+        ->where('adicionaisdospedidos.idPedidos', $id)
+        ->get();
     }
 }

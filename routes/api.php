@@ -26,6 +26,7 @@ Route::namespace('API')->name('api.')->group(function(){
     Route::get('/sabor/{id}', 'SaborController@find');
     // Adicionais
     Route::get('/adicionais', 'AdicionalController@showAll')->name('adicionais');
+    Route::get('/adicionais_pedido/{id}', 'AdicionalController@findAdicionaisbyPedido');
     // Pedido
     Route::post('/pedido/create', 'PedidoController@store');
     Route::get('/pedido/{id}', 'PedidoController@find');
@@ -33,7 +34,7 @@ Route::namespace('API')->name('api.')->group(function(){
     Route::post('/pedido/update/{id}', 'PedidoController@update');
     Route::delete('/pedido/delete/{id}', 'PedidoController@delete');
     Route::get('/pedidos', 'PedidoController@showAll');
-    Route::get('/pedido_adicionais/{id}', 'PedidoController@findAdicionais');
+    Route::get('/pedidoscomadicionais', 'PedidoController@pedidoscomadicionais');
 });
 
 // Route::get('/tamanhos', 'TamanhoController@showAll');

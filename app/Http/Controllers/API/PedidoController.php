@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Pedido;
 use App\Adicional;
+use DB;
 
 class PedidoController extends Controller
 {
@@ -78,10 +79,24 @@ class PedidoController extends Controller
         return Pedido::find($id);
     }
 
-    public function findAdicionais($id){
-        $adicionais = Pedido::whereHas('adicionais', function($query){
-            $query->where('idPedidos', '=', $id);
-        });
-        return $adicionais->get();
+    public function pedidoscomadicionais(){
+        $pedidos = DB::table('pedidos')
+        ->select('pedidos.idPedidos', 'tmDescricao', 'sbDescricao', 'adicionais.idAdicionais', 'adDescricao')
+        ->join('tamanhos', 'tamanhos.idTamanhos', '=', 'pedidos.idTamanhos')
+        ->join('sabores', 'sabores.idSabores', '=', 'pedidos.idSabores')
+        ->leftJoin('adicionaisdospedidos', 'pedidos.idPedidos', '=', 'adicionaisdospedidos.idPedidos')
+        ->leftJoin('adicionais', 'adicionaisdospedidos.idAdicionais', '=', 'adicionais.idAdicionais')
+        ->get();
+
+        foreach ($pedidos as $key => $value) {
+            $pdadicionais[$value->idPedidos]['tamanho'] = $value->tmDescricao; 
+            $pdadicionais[$value->idPedidos]['sabor'] = $value->sbDescricao; 
+            $pdadicionais[$value->idPedidos]['adicionais'][$value->idAdicionais] = $value->adDescricao; 
+        }
+        return $pdadicionais;
+        // dd($pdadicionais);
+
+        // ->toSql();
     }
+
 }

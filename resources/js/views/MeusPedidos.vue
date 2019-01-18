@@ -3,13 +3,24 @@
         <div class="col-sm-12 my-auto">
             <card-component 
                 :titleHeader="'Meus Pedidos'"
-                :cardImgTop="'images/pizza2.jpg'">
-                <div  v-for="(ped, key) in pedidos" :key="key">
-                    <ul>
-                        <li></li>
-                    </ul>
-                    {{ped}}
-                </div>
+                :cardImgTop="'images/pizza2.jpg'"
+                class="cardMeusPedidos">
+                <table class="table">
+                    <thead class="thead-darger">
+                        <tr>
+                        <th scope="col">Tamanho</th>
+                        <th scope="col">Sabor</th>
+                        <th scope="col">Adicionais</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="(ped, key) in pedidos" :key="key">
+                            <td>{{ped.tamanho}}</td>
+                            <td>{{ped.sabor}}</td>
+                            <td><p v-for="(adicionais, index) in ped.adicionais" :key="index">{{adicionais}}</p></td>
+                        </tr>
+                    </tbody>
+                </table>
             </card-component>
         </div>
     </div>
@@ -22,7 +33,7 @@ export default {
     },
     data(){
         return {
-            pedidos:null,
+            pedidos:{},
             pedido:{
                 idUser: this.$auth.user().id,
                 idTamanho:0,
@@ -34,35 +45,19 @@ export default {
         }
     },
     mounted () {
-        axios.get('/pedidos').then(response => {
-            // this.pedidos = response
-            var pedidos = [];
-            var ped;
-            var pedido = response.data;
-            for (const key in pedido) {
-                const element = pedido[key];
-                // ped[element.idPedidos] = {
-                //     'idPedido': element.idPedidos,
-                // };
-                // pedidos = ped;
-
-                axios.get('/tamanho/'+element.idTamanhos).then(res => {
-                    element.tamanho = res.data.tmDescricao
-                })
-                axios.get('/sabor/'+element.idSabores).then(res => {
-                    element.sabor = res.data.sbDescricao
-                })
-                axios.get('/pedido_adicionais/'+element.idPedidos).then(res => {
-                    element.adicionais = res.data
-                    console.log(res.data)
-                })
-                console.log(element);
-
-            }
+        axios.get('/pedidoscomadicionais').then(response => {
+            this.pedidos = response.data
         });
     },
     methods:{
     }
 }
 </script>
+<style>
+.cardMeusPedidos{
+    /* width: 50vw; */
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+</style>
 
