@@ -49,8 +49,13 @@
 - Open terminal and run:
 > php artisan db:seed
 
+# Run project
 - Start server:
 > php artisan server
 
 - To run:
 > npm run watch
+
+# PS:
+This project need to run in http://localhost:3000/, if run in other url, so it needs to change **/resources/js/app.js**
+axios.defaults.baseURL = '**NEW_URL**/api';
