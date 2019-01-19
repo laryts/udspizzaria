@@ -6,19 +6,19 @@
 					<div class="col icons">
 						<div class="row">
 							<div class="col iconSocial">
-								<router-link to="'mailto:laryts@icloud.com'">
+								<a target="_blank" href="mailto:laryts@icloud.com">
 									<font-awesome-icon :icon="['fas', 'envelope']"/>
-								</router-link>
+								</a>
 							</div>
 							<div class="col iconSocial">
-								<router-link to="'https://api.whatsapp.com/send?1=pt_BR&phone=5518997348036'">
+								<a target="_blank" href="https://api.whatsapp.com/send?1=pt_BR&phone=5518997348036">
 									<font-awesome-icon :icon="['fab', 'whatsapp']"/>
-								</router-link>
+								</a>
 							</div>
 							<div class="col iconSocial">
-								<router-link to="'https://linkedin.com/in/laryts'">
+								<a target="_blank" href="https://linkedin.com/in/laryts">
 									<font-awesome-icon :icon="['fab', 'linkedin']"/>
-								</router-link>
+								</a>
 							</div>
 						</div>
 					</div>
