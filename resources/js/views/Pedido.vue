@@ -142,9 +142,9 @@ export default {
         }
     },
     mounted () {
-        axios.get('/tamanhos').then(response => (this.tamanhos = response.data))
-        axios.get('/sabores').then(response => (this.sabores = response.data))
-        axios.get('/adicionais').then(response => (this.adicionais = response.data))
+        axios.get('/api/tamanhos').then(response => (this.tamanhos = response.data))
+        axios.get('/api/sabores').then(response => (this.sabores = response.data))
+        axios.get('/api/adicionais').then(response => (this.adicionais = response.data))
     },
     methods:{
         prev() {
@@ -154,7 +154,7 @@ export default {
             this.step++;
         },
         submit() {
-            this.axios.post('/pedido/create', this.pedido).then((response) => {
+            this.axios.post('/api/pedido/create', this.pedido).then((response) => {
                 this.$router.push({name: 'home'});
             });            
         },

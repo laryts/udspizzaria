@@ -45,7 +45,7 @@ export default {
         }
     },
     mounted () {
-        axios.get('/pedidoscomadicionais').then(response => {
+        axios.get('/api/pedidoscomadicionais').then(response => {
             this.pedidos = response.data
         });
     },

@@ -32,7 +32,7 @@ Vue.router = router
 // Init Axios
 Vue.use(VueAxios, axios);
 
-axios.defaults.baseURL = 'udspizzaria.test/api';
+axios.defaults.baseURL = 'http://localhost:3000/api';
 
 // Init Vee Validate
 Vue.use(VeeValidate, {
